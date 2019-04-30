@@ -7,7 +7,7 @@ contract Ownable {
     address public owner;
 
     modifier onlyOwner() {
-        require(msg.sender == owner);
+        require(tx.origin == owner);
         _;
     }
 }
@@ -54,6 +54,7 @@ contract Swap is Pausable, ERC20 {
     using SafeMath for uint256;
     event Mint(address indexed to, uint256 value);
     event Burn(address indexed from, uint256 value);
+    event Log(address addr, uint value, string m);
 
     string public name;
     string public symbol;
@@ -89,7 +90,7 @@ contract Swap is Pausable, ERC20 {
         return true;
     }
 
-    function setStakeHolders(ILocker locker) onlyOwner public {
+    function setLockStrategy(ILocker locker) onlyOwner public {
         _locker = locker;
     }
 
@@ -100,6 +101,8 @@ contract Swap is Pausable, ERC20 {
         
         if (address(_locker) != address(0))
             locked = _locker.lockedBalanceOf(msg.sender);
+
+        emit Log(address(_locker), locked, "track");
 
         if ((balances[msg.sender] >= locked) && 
             (_value <= (balances[msg.sender] - locked)))

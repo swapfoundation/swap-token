@@ -8,12 +8,12 @@ contract SwapStakeHolders is ILocker {
     address private _admin;
     ILocker[] private _strategies;
 
-    constructor(address admin) public {
-        _admin = admin;
+    constructor() public {
+        _admin = tx.origin;
     }
 
     function addLockStrategy(ILocker locker) public {
-        require(msg.sender == _admin);
+        require(tx.origin == _admin);
         _strategies.push(locker);
     }
 
