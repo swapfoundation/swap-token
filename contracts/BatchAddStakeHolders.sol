@@ -83,15 +83,15 @@ contract BatchAddStakeHolders {
         uint[] memory unlockDate = new uint[](11);
         unlockDate[0] = uint(1558828799);     // 2019-5-25 07:59:59 AM 北京时间
         unlockDate[1] = uint(1558828800);     // 2019-5-26 08:00:00 AM 北京时间
-        unlockDate[2] = uint(1561507200);     // 2019-6-26 08:00:00 AM 北京时间
-        unlockDate[3] = uint(1564099200);     // 2019-7-26 08:00:00 AM 北京时间
-        unlockDate[4] = uint(1566777600);     // 2019-8-26 08:00:00 AM 北京时间
-        unlockDate[5] = uint(1569456000);     // 2019-9-26 08:00:00 AM 北京时间
-        unlockDate[6] = uint(1572048000);     // 2019-10-26 08:00:00 AM 北京时间
-        unlockDate[7] = uint(1574726400);     // 2019-11-26 08:00:00 AM 北京时间
-        unlockDate[8] = uint(1577318400);     // 2019-12-26 08:00:00 AM 北京时间
-        unlockDate[9] = uint(1579996800);     // 2020-1-26 08:00:00 AM 北京时间
-        unlockDate[10] = uint(1582675200);     // 2020-2-26 08:00:00 AM 北京时间
+        unlockDate[2] = uint(1561568400);     // 2019-6-27 01:00:00 AM 北京时间
+        unlockDate[3] = uint(1564160400);     // 2019-7-27 01:00:00 AM 北京时间
+        unlockDate[4] = uint(1566838800);     // 2019-8-27 01:00:00 AM 北京时间
+        unlockDate[5] = uint(1569517200);     // 2019-9-27 01:00:00 AM 北京时间
+        unlockDate[6] = uint(1572109200);     // 2019-10-27 01:00:00 AM 北京时间
+        unlockDate[7] = uint(1574787600);     // 2019-11-27 01:00:00 AM 北京时间
+        unlockDate[8] = uint(1577379600);     // 2019-12-27 01:00:00 AM 北京时间
+        unlockDate[9] = uint(1580058000);     // 2020-1-27 01:00:00 AM 北京时间
+        unlockDate[10] = uint(1582736400);     // 2020-2-27 01:00:00 AM 北京时间
 
         uint[] memory unlockPercents = new uint[](11);
         uint i = 0;
