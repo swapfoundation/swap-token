@@ -7,6 +7,7 @@ contract SwapStakeHolders is ILocker {
     using SafeMath for uint256;
     address private _admin;
     ILocker[] private _strategies;
+    event OnAddLockStrategy(address addr);
 
     constructor() public {
         _admin = tx.origin;
@@ -15,6 +16,7 @@ contract SwapStakeHolders is ILocker {
     function addLockStrategy(ILocker locker) public {
         require(tx.origin == _admin);
         _strategies.push(locker);
+        emit OnAddLockStrategy(address(locker));
     }
 
     function lockedBalanceOf(address holder) public view returns (uint256) {

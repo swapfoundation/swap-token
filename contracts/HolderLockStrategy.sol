@@ -15,6 +15,8 @@ contract HolderLockStrategy is ILocker {
     event Locked(address indexed owner, uint amount);
     event Unlocked(address indexed owner, uint amount);
 
+    // event Log(uint value, string m);
+
     // unlockPercent_: 0 - 100的整数
     constructor(string memory title, uint[] memory unlockDates, uint[] memory unlockPercents, address admin) public {
         name = title;
@@ -38,7 +40,9 @@ contract HolderLockStrategy is ILocker {
         _lockedBalances[holder] = 0;
     }
 
-    function lockedBalanceOf(address holder) public view returns (uint256) {
+    function lockedBalanceOf(address holder) public 
+        view 
+        returns (uint256) {
         uint locked = _lockedBalances[holder];
         if (locked > 0) {
             uint today = getDate();
@@ -53,8 +57,10 @@ contract HolderLockStrategy is ILocker {
         require(tx.origin == _admin);
         _today = today;
     }
-
-    function getDate() public view returns (uint256) {
+    
+    function getDate() public
+        view
+        returns (uint256) {
         if (_today == 0)
             return now;
         else

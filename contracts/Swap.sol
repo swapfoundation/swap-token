@@ -54,7 +54,7 @@ contract Swap is Pausable, ERC20 {
     using SafeMath for uint256;
     event Mint(address indexed to, uint256 value);
     event Burn(address indexed from, uint256 value);
-    event Log(address addr, uint value, string m);
+    // event Log(address addr, uint value, string m);
 
     string public name;
     string public symbol;
@@ -97,19 +97,15 @@ contract Swap is Pausable, ERC20 {
     function transfer(address _to, uint256 _value) whenNotPaused public returns (bool) {
         require(_to != address(0));
 
-        uint locked = 0;
-        
-        if (address(_locker) != address(0))
-            locked = _locker.lockedBalanceOf(msg.sender);
+        address _from = msg.sender;
+        uint available = availableBalanceOf(_from);
 
-        emit Log(address(_locker), locked, "track");
-
-        if ((balances[msg.sender] >= locked) && 
-            (_value <= (balances[msg.sender] - locked)))
+        // emit Log(_from, available, "transfer");
+        if (_value <= available)
         {
-            balances[msg.sender] = balances[msg.sender].sub(_value);
+            balances[_from] = balances[_from].sub(_value);
             balances[_to] = balances[_to].add(_value);
-            emit Transfer(msg.sender, _to, _value);
+            emit Transfer(_from, _to, _value);
             return true;
         }
         else
@@ -122,15 +118,22 @@ contract Swap is Pausable, ERC20 {
         return balances[_owner];
     }
 
+    function availableBalanceOf(address _owner) public view returns (uint256 balance) {
+        uint locked = 0;
+
+        if (address(_locker) != address(0))
+            locked = _locker.lockedBalanceOf(_owner);
+
+        // emit Log(address(_locker), locked, "availableBalanceOf");
+
+        return balances[_owner].sub(locked);
+    }
+
     function transferFrom(address _from, address _to, uint256 _value) public whenNotPaused returns (bool) {
         require(_to != address(0));
+        uint available = availableBalanceOf(_from);
 
-        uint locked = 0;
-        
-        if (address(_locker) != address(0))
-            locked = _locker.lockedBalanceOf(msg.sender);
-
-        require((balances[_from] >= locked) && (_value <= (balances[_from] - locked)));
+        require(_value <= available);
         require(_value <= allowed[_from][msg.sender]);
 
         balances[_from] = balances[_from].sub(_value);

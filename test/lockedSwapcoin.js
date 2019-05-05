@@ -39,6 +39,11 @@ contract('LockSwap', (accounts) => {
     await stakes.addLockStrategy(funds.address);
     await SwapCoinInstance.setLockStrategy(stakes.address);
 
+    var available = await SwapCoinInstance.availableBalanceOf.call(accountOne);
+    assert.isTrue(available.eq(0), "账户1的可用余额不对！");
+    available = await SwapCoinInstance.availableBalanceOf.call(accountTwo);
+    assert.isTrue(available.eq(0), "账户2的可用余额不对！");
+
     const amount = web3.toWei(100, "ether");
     try {
       await SwapCoinInstance.transfer(accountTwo, amount, { from: accountOne });
@@ -75,6 +80,20 @@ contract('LockSwap', (accounts) => {
     await SwapCoinInstance.transfer(accountOne, web3.toWei(10000000, "ether"), { from: owner });
     await SwapCoinInstance.transfer(accountTwo, web3.toWei(2000000, "ether"), { from: owner });
 
+    // 设置预授权
+    var contractAddr = accounts[9];
+    var approveAmount = web3.toWei(1000000, "ether");
+    await SwapCoinInstance.approve(contractAddr, approveAmount, {from: accountOne});
+    var actualApprovedAmount = await SwapCoinInstance.allowance.call(accountOne, contractAddr);
+    assert.isTrue(actualApprovedAmount.eq(approveAmount), "预授权的数额不对！");
+    actualApprovedAmount = await SwapCoinInstance.allowance.call(accountTwo, contractAddr);
+    assert.equal(0, actualApprovedAmount, "预授权的地址数额不对！");
+
+    var available = await SwapCoinInstance.availableBalanceOf.call(accountOne);
+    assert.isTrue(available.eq(web3.toWei(1000000, "ether")), "账户1的可用余额不对！");
+    available = await SwapCoinInstance.availableBalanceOf.call(accountTwo);
+    assert.isTrue(available.eq(web3.toWei(200000, "ether")), "账户2的可用余额不对！");
+
     // 只能动10%
     var amount = web3.toWei(1000001, "ether");
     try {
@@ -87,12 +106,54 @@ contract('LockSwap', (accounts) => {
     var expected = web3.toWei(10000000, "ether");
     assert.isTrue(balance.eq(expected), "锁仓失败！");
 
-    var amount = web3.toWei(1000000, "ether");
+    // 验证不能使用transferFrom转账
+    var amount = web3.toWei(1000001, "ether");
+    try {
+      await SwapCoinInstance.transferFrom(accountOne, accountTwo, amount, { from: contractAddr });
+      assert.fail("不应该可以转账！");
+    } catch (error) {}
+
+    // 验证用户的余额
+    balance = web3.fromWei((await SwapCoinInstance.balanceOf.call(accountOne)), 'wei');
+    expected = web3.toWei(10000000, "ether");
+    assert.isTrue(balance.eq(expected), "锁仓失败！");
+
+    var amount = web3.toWei(900000, "ether");
     await SwapCoinInstance.transfer(accountTwo, amount, { from: accountOne });
 
     // 验证用户的余额
-    var balance = web3.fromWei((await SwapCoinInstance.balanceOf.call(accountOne)), 'wei');
-    var expected = web3.toWei(9000000, "ether");
+    balance = web3.fromWei((await SwapCoinInstance.balanceOf.call(accountOne)), 'wei');
+    expected = web3.toWei(9100000, "ether");
+    assert.isTrue(balance.eq(expected), "转账数额错了！");
+    balance = (await SwapCoinInstance.balanceOf.call(accountTwo)).toNumber();
+    assert.equal(web3.toWei(2900000, "ether"), balance, "转账数额错了！");
+
+    // 可以使用transferFrom转账
+    amount = web3.toWei(60000, "ether");
+    await SwapCoinInstance.transferFrom(accountOne, accountTwo, amount, { from: contractAddr });
+    // 验证用户的余额
+    balance = web3.fromWei((await SwapCoinInstance.balanceOf.call(accountOne)), 'wei');
+    expected = web3.toWei(9040000, "ether");
+    assert.isTrue(balance.eq(expected), "转账数额错了！");
+    balance = (await SwapCoinInstance.balanceOf.call(accountTwo)).toNumber();
+    assert.equal(web3.toWei(2960000, "ether"), balance, "转账数额错了！");
+
+    //transferFrom转账只能在锁仓限额之内
+    amount = web3.toWei(40001, "ether");
+    try {
+      await SwapCoinInstance.transferFrom(accountOne, accountTwo, amount, { from: contractAddr });
+      assert.fail("不应该可以转账！");
+    } catch (error) {}
+    // 验证用户的余额
+    balance = web3.fromWei((await SwapCoinInstance.balanceOf.call(accountOne)), 'wei');
+    expected = web3.toWei(9040000, "ether");
+    assert.isTrue(balance.eq(expected), "锁仓失败！");
+
+    amount = web3.toWei(40000, "ether");
+    await SwapCoinInstance.transferFrom(accountOne, accountTwo, amount, { from: contractAddr });
+    // 验证用户的余额
+    balance = web3.fromWei((await SwapCoinInstance.balanceOf.call(accountOne)), 'wei');
+    expected = web3.toWei(9000000, "ether");
     assert.isTrue(balance.eq(expected), "转账数额错了！");
     balance = (await SwapCoinInstance.balanceOf.call(accountTwo)).toNumber();
     assert.equal(web3.toWei(3000000, "ether"), balance, "转账数额错了！");
@@ -119,6 +180,11 @@ contract('LockSwap', (accounts) => {
     // 给两个账号转账
     await SwapCoinInstance.transfer(accountOne, web3.toWei(10000000, "ether"), { from: owner });
     await SwapCoinInstance.transfer(accountTwo, web3.toWei(2000000, "ether"), { from: owner });
+
+    var available = await SwapCoinInstance.availableBalanceOf.call(accountOne);
+    assert.isTrue(available.eq(web3.toWei(4000000, "ether")), "账户1的可用余额不对！");
+    available = await SwapCoinInstance.availableBalanceOf.call(accountTwo);
+    assert.isTrue(available.eq(web3.toWei(800000, "ether")), "账户2的可用余额不对！");
 
     // 能动40%
     var amount = web3.toWei(4000001, "ether");
