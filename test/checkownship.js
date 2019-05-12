@@ -129,12 +129,16 @@ contract('CheckOwnerShip', (accounts) => {
     await SwapCoinInstance.mint(accountOne, web3.toWei(10000000, "ether"), {from: owner});
     var balanceAfter = (await SwapCoinInstance.balanceOf.call(accountOne)).toNumber();
     assert.equal(web3.toWei(10000000, "ether"), balanceAfter, "owner无法增发！");
+    var totalSupplyAfter = (await SwapCoinInstance.totalSupply.call()).toNumber();
+    assert.equal(web3.toWei(3100000000 + 10000000, "ether"), totalSupplyAfter, "owner无法增发！");
 
     // owner可以销毁
     await SwapCoinInstance.burn(accountOne, web3.toWei(10000000, "ether"), {from: owner});
     balanceAfter = (await SwapCoinInstance.balanceOf.call(accountOne)).toNumber();
     assert.equal(balanceBefore, balanceAfter, "owner无法销毁！");
     assert.equal(0, balanceAfter, "owner无法销毁！");
+    totalSupplyAfter = (await SwapCoinInstance.totalSupply.call()).toNumber();
+    assert.equal(web3.toWei(3100000000, "ether"), totalSupplyAfter, "owner无法增发！");
 
     // owner可以停止
     await SwapCoinInstance.pause({from: owner});
