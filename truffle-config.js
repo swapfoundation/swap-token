@@ -1,21 +1,21 @@
+const LedgerWalletProvider = require('truffle-ledger-provider');
+ 
+const ledgerOptions = {
+  networkId: 1, // mainnet
+  path: "44'/60'/0'/0", // ledger default derivation path
+  askConfirm: false,
+  accountsLength: 1,
+  accountsOffset: 1     // 第二个账号
+};
+const provider = new LedgerWalletProvider(ledgerOptions, 'http://localhost:8545');
+
 module.exports = {
-  // Uncommenting the defaults below 
-  // provides for an easier quick-start with Ganache.
-  // You can also follow this format for other networks;
-  // see <http://truffleframework.com/docs/advanced/configuration>
-  // for more details on how to specify configuration options!
-  /*
   networks: {
-    development: {
+    mainnet: {
       host: "127.0.0.1",
-      port: 7545,
-      network_id: "*"
-    },
-    test: {
-      host: "127.0.0.1",
-      port: 7545,
-      network_id: "*"
+      port: 8545,
+      provider: provider,
+      network_id: 1
     }
   }
-  */
 };
