@@ -9,6 +9,7 @@ contract('Swap', (accounts) => {
 
     assert.equal(actual, expected, "3100000000 wasn't in the first account");
   });
+  
   it('should send coin correctly', async () => {
     const SwapCoinInstance = await SwapCoin.deployed();
 
