@@ -36,7 +36,7 @@ contract HolderLockStrategy {
         _admin = msg.sender;
     }
 
-    /** 发布时移除掉此方法 */
+    /** 发布时移除掉此方法
     function setToday(uint today) public {
         require(msg.sender == _admin);
         _today = today;
