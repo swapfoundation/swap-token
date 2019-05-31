@@ -1,9 +1,12 @@
 const SwapCoin = artifacts.require("Swap");
-const TestLocker = artifacts.require("TestLocker");
-const TestLocker2 = artifacts.require("TestLocker2");
+const FundLockContract = artifacts.require("FundLockContract");
+const SwapTeamMemberLockContract = artifacts.require("SwapTeamMemberLockContract");
+const HolderLockStrategy = artifacts.require("HolderLockStrategy");
 
 module.exports = function(deployer) {
-  deployer.deploy(SwapCoin);
-  deployer.deploy(TestLocker);
-  deployer.deploy(TestLocker2);
+  deployer.deploy(SwapCoin).then(function() {
+    deployer.deploy(SwapTeamMemberLockContract, SwapCoin.address);
+    deployer.deploy(FundLockContract, SwapCoin.address);
+  });
+  deployer.deploy(HolderLockStrategy);
 };

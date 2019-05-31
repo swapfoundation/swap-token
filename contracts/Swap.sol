@@ -41,7 +41,7 @@ contract Swap is Ownable, ERC20 {
 
         address _from = msg.sender;
         uint available = balanceOf(_from);
-
+        
         if (_value <= available)
         {
             balances[_from] = balances[_from].sub(_value);
