@@ -41,7 +41,6 @@ contract HolderLockStrategy {
         require(msg.sender == _admin);
         _today = today;
     }
-    /***/
     
     function getDate() private
         view
@@ -50,6 +49,13 @@ contract HolderLockStrategy {
             return now;
         else
             return _today;
+    }
+    /***/
+
+    function getDate() private
+        view
+        returns (uint256) {
+        return now;
     }
 
     function calculatePhase() public view returns (uint256) {
