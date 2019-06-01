@@ -4,7 +4,7 @@ import './ERC20.sol';
 import './HolderLockStrategy.sol';
 
 contract SwapTeamMemberLockContract is HolderLockStrategy {
-    constructor(address token) public {
+    constructor() public {
         uint[] memory unlockDate = new uint[](6);
         unlockDate[0] = uint(1558828800);     // 2019-5-26 08:00:00 AM 北京时间
         unlockDate[1] = uint(1588262400);     // 2020-5-1 12:00:00 AM 北京时间
@@ -24,6 +24,6 @@ contract SwapTeamMemberLockContract is HolderLockStrategy {
             unlockPercents,
             0x622F7546Ea541d56d9781160b2ffde89832a9DB4,
             310000000 * 10 ** 18,
-            token);
+            0x9603f8Ca8Ff73493676946cf6eF26B4C4c1Fa198);
     }
 }

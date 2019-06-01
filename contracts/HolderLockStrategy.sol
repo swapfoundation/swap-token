@@ -85,4 +85,9 @@ contract HolderLockStrategy {
         uint unlockable = calculateUnlockedAmount();
         return unlockable.sub(_withdrawed);
     }
+
+    function checkBalance(address _holder) public view returns (uint256) {
+        ERC20 token = ERC20(_token);
+        return token.balanceOf(_holder);
+    }
 }
