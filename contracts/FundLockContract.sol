@@ -3,7 +3,7 @@ pragma solidity >=0.4.25 <0.6.0;
 import './HolderLockStrategy.sol';
 
 contract FundLockContract is HolderLockStrategy {
-    constructor(address token) public {
+    constructor() public {
         uint[] memory unlockDate = new uint[](6);
         unlockDate[0] = uint(1558828800);     // 2019-5-26 08:00:00 AM 北京时间
         unlockDate[1] = uint(1651334400);     // 2022-5-1 12:00:00 AM 北京时间
@@ -23,6 +23,6 @@ contract FundLockContract is HolderLockStrategy {
             unlockPercents,
             0x5F432F600222dC0c91bac3887659B2a67A8f99e5,
             930000000 * 10 ** 18,
-            token);
+            0x9603f8Ca8Ff73493676946cf6eF26B4C4c1Fa198);
     }
 }
