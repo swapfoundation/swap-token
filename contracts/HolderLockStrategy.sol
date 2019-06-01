@@ -11,7 +11,6 @@ contract HolderLockStrategy {
     address private _admin;
     uint[] private _unlockDates;
     uint[] private _unlockPercents;
-    uint private _today;
     bool private _initialized;
     address private _token;
     uint private _withdrawed;
@@ -35,22 +34,6 @@ contract HolderLockStrategy {
 
         _admin = msg.sender;
     }
-
-    /** 发布时移除掉此方法
-    function setToday(uint today) public {
-        require(msg.sender == _admin);
-        _today = today;
-    }
-    
-    function getDate() private
-        view
-        returns (uint256) {
-        if (_today == 0)
-            return now;
-        else
-            return _today;
-    }
-    /***/
 
     function getDate() private
         view
@@ -88,8 +71,9 @@ contract HolderLockStrategy {
         uint256 available = availableBalance();
         if (available > 0) {
             ERC20 token = ERC20(_token);
+            require(token.transfer(_to, available));
             _withdrawed = _withdrawed.add(available);
-            return token.transfer(_to, available);
+            return true;
         } else {
             return false;
         }
